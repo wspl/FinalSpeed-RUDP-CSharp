@@ -17,5 +17,7 @@ namespace RUDP_AirLink.RUDP.Packets
         public int ConnectId { get; set; }
         public int ClientId { get; set; }
 
+        public string DstHost { get; set; }
+        public int DstPort { get; set; }
     }
 }
