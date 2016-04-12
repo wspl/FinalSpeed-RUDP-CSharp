@@ -14,25 +14,43 @@ namespace RUDP_AirLink.RUDP
 {
     class ClientControl
     {
-        int ClientId;
+        public int ClientId { get; set; }
+
+        private int _clientIdReal = -1;
+        public int ClientIdReal {
+            get
+            {
+                return _clientIdReal;
+            }
+            set {
+                _clientIdReal = value;
+                LastReceivePingTime = DateTimeExtensions.CurrentTimeMillis();
+            }
+        }
 
         Thread SendThread;
 
-        object SynLock = new object();
+        object SynLock { get; set; } = new object();
 
         private Dictionary<int, SendRecord> SendRecordTable = new Dictionary<int, SendRecord>();
 
-        Dictionary<int, SendRecord> SendRecordTableRemote = new Dictionary<int, SendRecord>();
+        private Dictionary<int, SendRecord> SendRecordTableRemote = new Dictionary<int, SendRecord>();
 
         long StartSendTime = 0;
-        int CurrentSpeed, InitSpeed, MaxSpeed = 1024 * 1024;
+
+        int CurrentSpeed = 1024 * 1024;
+        int InitSpeed = 1024 * 1024;
+        int MaxSpeed = 1024 * 1024;
+
         int LastTime = -1;
 
         object SynTimeId = new object();
 
         long Sended = 0;
         long MarkTime = 0;
-        long LastSendPingTime, LastReceivePingTime = DateTimeExtensions.CurrentTimeMillis();
+
+        public long LastSendPingTime { get; set; } = DateTimeExtensions.CurrentTimeMillis();
+        public long LastReceivePingTime { get; set; } = DateTimeExtensions.CurrentTimeMillis();
 
         Random Ran = new Random();
 
@@ -40,22 +58,21 @@ namespace RUDP_AirLink.RUDP
 
         public int PingDelay = 250;
 
-        int ClientIdReal = -1;
-
         long NeedSleepAll, TrueSleepAll;
 
         int MaxAcked = 0;
         long LastLockTime;
 
         Route MyRoute;
-        string DstHost;
-        int DstPort;
+
+        public string DstHost { get; set; }
+        public int DstPort { get; set; }
 
         public Dictionary<int, ConnectionUDP> ConnTable = new Dictionary<int, ConnectionUDP>();
 
         object SynConnTable, SynTunTable = new object();
 
-        string Password;
+        public string Password { get; set; }
 
         public ResendManage em = new ResendManage();
 
@@ -79,23 +96,50 @@ namespace RUDP_AirLink.RUDP
             if (sType == PacketType.PingPacket)
             {
                 PingPacket pp = new PingPacket(dp);
-                //TODO
+                SendPingPacket2(pp.PingId, dp.Host, dp.Port);
+                CurrentSpeed = pp.DownloadSpeed * 1024;
+            }
+            else if (sType == PacketType.PingPacket2)
+            {
+                PingPacket2 ppt = new PingPacket2(dp);
+                LastReceivePingTime = DateTimeExtensions.CurrentTimeMillis();
+                long? t = PingTable[ppt.PingId];
+                if (t != null)
+                {
+                    PingDelay = (int)(DateTimeExtensions.CurrentTimeMillis() - t);
+                    string protocal = "";
+                    if (MyRoute.IsUseTcpTun())
+                    {
+                        protocal = "tcp";
+                    }
+                    else
+                    {
+                        protocal = "udp";
+                    }
+                    Console.WriteLine("delay_" + protocal + " " + PingDelay + "ms " + dp.Host + ":" + dp.Port);
+                }
             }
         }
 
         public void SendPacket(DatagramPacket dp)
         {
-            //TODO
+            MyRoute.SendPacket(dp);
         }
 
-        void AddConnection(ConnctionUDP conn)
+        public void AddConnection(ConnectionUDP conn)
         {
-            //TODO
+            lock (SynConnTable)
+            {
+                ConnTable.Add(conn.ConnectId, conn);
+            }
         }
 
-        void RemoveConnection(ConnctionUDP conn)
+        public void RemoveConnection(ConnectionUDP conn)
         {
-            //TODO
+            lock (SynConnTable)
+            {
+                ConnTable.Remove(conn.ConnectId);
+            }
         }
 
         public void Close()
@@ -104,7 +148,17 @@ namespace RUDP_AirLink.RUDP
             MyRoute.ClientManager.RemoveClient(ClientId);
             lock (SynConnTable)
             {
-                //TODO
+                foreach(KeyValuePair<int, ConnectionUDP> connItem in ConnTable)
+                {
+                    ConnectionUDP conn = connItem.Value;
+                    if (conn != null)
+                    {
+                        MyRoute.Es.Execute(() => {
+                            conn.StopNow = true;
+                            conn.Destory(true);
+                        });
+                    }
+                }
             }
         }
 
@@ -117,7 +171,10 @@ namespace RUDP_AirLink.RUDP
             SendRecordTableRemote.Clear();
         }
 
-        //TODO?: public void OnSendDataPacket()
+        public void OnSendDataPacket()
+        {
+
+        }
 
         public void SendPingPacket()
         {
@@ -221,6 +278,5 @@ namespace RUDP_AirLink.RUDP
                 Sended = 0;
             }
         }
-        // TODO: Getter Setter
     }
 }

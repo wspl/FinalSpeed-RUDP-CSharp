@@ -10,10 +10,10 @@ namespace RUDP_AirLink.RUDP.Packets
     {
         byte[] DpData = new byte[20];
 
-        int PingId { get; set; }
+        public int PingId { get; set; }
 
-        int DownloadSpeed { get; set; }
-        int UploadSpeed { get; set; }
+        public int DownloadSpeed { get; set; }
+        public int UploadSpeed { get; set; }
 
         public PingPacket(int connectId, int clientId, int pingId, 
                           int downloadSpeed, int uploadSpeed)
