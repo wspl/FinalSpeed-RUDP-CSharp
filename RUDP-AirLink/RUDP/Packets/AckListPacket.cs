@@ -8,18 +8,18 @@ namespace RUDP_AirLink.RUDP.Packets
 {
     class AckListPacket : Packet
     {
-        List<int> AckList { get; set; }
+        public List<int> AckList { get; set; }
 
         byte[] DpData;
 
-        int LastRead { get; set; }
+        public int LastRead { get; set; }
 
-        int R1 { get; set; }
-        int R2 { get; set; }
-        int R3 { get; set; }
-        int S1 { get; set; }
-        int S2 { get; set; }
-        int S3 { get; set; }
+        public int R1 { get; set; }
+        public int R2 { get; set; }
+        public int R3 { get; set; }
+        public int S1 { get; set; }
+        public int S2 { get; set; }
+        public int S3 { get; set; }
 
         public AckListPacket(List<int> ackList, int lastRead,
                              Dictionary<int, SendRecord> sendRecordTable,

@@ -8,21 +8,21 @@ namespace RUDP_AirLink.RUDP.Packets
 {
     class DataPacket : Packet
     {
-        int Sequence { get; set; } = 0;
+        public int Sequence { get; set; } = 0;
         short Length { get; set; } = 0;
 
-        byte[] Data { get; set; }
+        public byte[] Data { get; set; }
         byte[] DpData;
 
-        int TimeId { get; set; }
+        public int TimeId { get; set; }
 
-        string DstHost { get; set; }
-        int DstPort { get; set; }
+        public string DstHost { get; set; }
+        public int DstPort { get; set; }
 
         int Offset;
 
-        int FirstSendTimeId { get; set; }
-        long FirstSendTime { get; set; }
+        public int FirstSendTimeId { get; set; }
+        public long FirstSendTime { get; set; }
 
         public DataPacket(int sequence, byte[] dataq, int offset, short length,
                           int connectId, int clientId)

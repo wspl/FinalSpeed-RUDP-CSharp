@@ -11,7 +11,7 @@ namespace RUDP_AirLink.RUDP.Packets
         byte[] Data;
         byte[] DpData;
 
-        int CloseOffset { get; set; }
+        public int CloseOffset { get; set; }
 
         public CloseStreamPacket(int connectId, int clientId, int closeOffset)
         {

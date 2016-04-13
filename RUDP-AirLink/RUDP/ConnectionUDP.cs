@@ -24,6 +24,13 @@ namespace RUDP_AirLink.RUDP
         int Mode;
 
         private bool _connected = true;
+        public bool IsConnected
+        {
+            get
+            {
+                return _connected;
+            }
+        }
 
         long LastLiveTime = DateTimeExtensions.CurrentTimeMillis();
         long LastSendLiveTime = 0;
@@ -84,8 +91,6 @@ namespace RUDP_AirLink.RUDP
 
         public override string ToString() => DstHost + ":" + DstPort;
 
-        public bool IsConnected() => _connected;
-
         public void CloseLocal()
         {
             if (!LocalClosed)
@@ -127,6 +132,6 @@ namespace RUDP_AirLink.RUDP
             }
         }
 
-        void live() => LastLiveTime = DateTimeExtensions.CurrentTimeMillis();
+        public void Live() => LastLiveTime = DateTimeExtensions.CurrentTimeMillis();
     }
 }

@@ -34,7 +34,7 @@ namespace RUDP_AirLink.RUDP
 
         private Dictionary<int, SendRecord> SendRecordTable = new Dictionary<int, SendRecord>();
 
-        private Dictionary<int, SendRecord> SendRecordTableRemote = new Dictionary<int, SendRecord>();
+        public Dictionary<int, SendRecord> SendRecordTableRemote = new Dictionary<int, SendRecord>();
 
         long StartSendTime = 0;
 
@@ -204,7 +204,7 @@ namespace RUDP_AirLink.RUDP
 
         //TODO?: public void onReceivePing(PingMessage pm)
 
-        SendRecord GetSendRecord(int timeId)
+        public SendRecord GetSendRecord(int timeId)
         {
             SendRecord record;
             lock (SynTimeId)
