@@ -61,6 +61,7 @@
     <Compile Include="RUDP\Packets\PingPacket2.cs" />
     <Compile Include="RUDP\Receiver.cs" />
     <Compile Include="RUDP\ResendItem.cs" />
+    <Compile Include="RUDP\ResendManage.cs" />
     <Compile Include="RUDP\RUDPConfig.cs" />
     <Compile Include="RUDP\SendRecord.cs" />
     <Compile Include="Utils\DateTimeExtensions.cs" />

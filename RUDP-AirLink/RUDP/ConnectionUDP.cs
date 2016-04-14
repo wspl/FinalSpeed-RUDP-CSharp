@@ -37,7 +37,7 @@ namespace RUDP_AirLink.RUDP
 
         static Random ran = new Random();
 
-        int ConnectId;
+        public int ConnectId;
 
         private BlockingCollection<DatagramPacket> DpBuffer = new BlockingCollection<DatagramPacket>();
 
