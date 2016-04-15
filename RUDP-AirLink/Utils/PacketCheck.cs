@@ -9,7 +9,7 @@ namespace RUDP_AirLink.Utils
 {
     class PacketCheck
     {
-        public static int CheckVer(DatagramPacket dp) => BitConverter.ToInt16(dp.Dgram, 0);
-        public static int CheckSType(DatagramPacket dp) => BitConverter.ToInt16(dp.Dgram, 2);
+        public static int CheckVer(DatagramPacket dp) => BitConverter.ToInt16(dp.Data, 0);
+        public static int CheckSType(DatagramPacket dp) => BitConverter.ToInt16(dp.Data, 2);
     }
 }

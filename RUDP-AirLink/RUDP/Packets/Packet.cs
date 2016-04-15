@@ -12,7 +12,7 @@ namespace RUDP_AirLink.RUDP.Packets
         public short SType { get; set; } = 0;
         public short Ver { get; set; } = RUDPConfig.ProtocalVer;
 
-        public DatagramPacket Dp { get; set; }
+        public DatagramPacket MyDatagramPacket { get; set; }
 
         public int ConnectId { get; set; }
         public int ClientId { get; set; }

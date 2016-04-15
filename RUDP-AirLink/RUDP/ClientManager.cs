@@ -42,23 +42,25 @@ namespace RUDP_AirLink.RUDP
 
             foreach (KeyValuePair<int, ClientControl> ccItem in ClientTable)
             {
-                ClientControl cc = ccItem.Value;
-                if (cc != null)
+                ClientControl clientControl = ccItem.Value;
+                if (clientControl != null)
                 {
-                    if (current - cc.LastReceivePingTime < ReceivePingTimeout &&
-                        current - cc.LastReceivePingTime > SendPingInterval)
+                    if (current - clientControl.LastReceivePingTime < ReceivePingTimeout &&
+                        current - clientControl.LastReceivePingTime > SendPingInterval)
                     {
-                        cc.SendPingPacket();
+                        clientControl.SendPingPacket();
                     }
                 }
                 else
                 {
                     //Timtout
-                    Console.WriteLine("Timeout and close client: " + cc.DstHost + ":" + cc.DstPort + " " + DateTime.Now.ToString());
+                    Console.WriteLine("Timeout and close client: " 
+                        + clientControl.DstHost + ":" + clientControl.DstPort 
+                        + " " + DateTime.Now.ToString());
 
                     lock (SynClientTable)
                     {
-                        cc.Close();
+                        clientControl.Close();
                     }
                 }
             }
@@ -68,17 +70,17 @@ namespace RUDP_AirLink.RUDP
 
         ClientControl GetClientControl(int clientId, string dstHost, int dstPort)
         {
-            ClientControl c = ClientTable[clientId];
-            if (c == null)
+            ClientControl clientControl = ClientTable[clientId];
+            if (clientControl == null)
             {
-                c = new ClientControl(MyRoute, clientId, dstHost, dstPort);
+                clientControl = new ClientControl(MyRoute, clientId, dstHost, dstPort);
                 
                 lock (SynClientTable)
                 {
-                    ClientTable.Add(clientId, c);
+                    ClientTable.Add(clientId, clientControl);
                 }
             }
-            return c;
+            return clientControl;
         }
     }
 }

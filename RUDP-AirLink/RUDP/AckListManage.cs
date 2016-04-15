@@ -25,14 +25,16 @@ namespace RUDP_AirLink.RUDP
         {
             lock (SynAck)
             {
+                AckListTask ackListTask;
+
                 if (!TaskTable.ContainsKey(conn.ConnectId))
                 {
-                    AckListTask at = new AckListTask(conn);
-                    TaskTable.Add(conn.ConnectId, at);
+                    ackListTask = new AckListTask(conn);
+                    TaskTable.Add(conn.ConnectId, ackListTask);
                 }
 
-                AckListTask at = TaskTable[conn.ConnectId];
-                at.AddAck(sequence);
+                ackListTask = TaskTable[conn.ConnectId];
+                ackListTask.AddAck(sequence);
             }
         }
 
@@ -42,8 +44,8 @@ namespace RUDP_AirLink.RUDP
             {
                 if (!TaskTable.ContainsKey(conn.ConnectId))
                 {
-                    AckListTask at = new AckListTask(conn);
-                    TaskTable.Add(conn.ConnectId, at);
+                    AckListTask ackListTask = new AckListTask(conn);
+                    TaskTable.Add(conn.ConnectId, ackListTask);
                 }
             }
         }
@@ -53,9 +55,9 @@ namespace RUDP_AirLink.RUDP
             while (true)
             {
                 lock (SynAck) {
-                    foreach (KeyValuePair<int, AckListTask> at in TaskTable)
+                    foreach (KeyValuePair<int, AckListTask> ackListTask in TaskTable)
                     {
-                        at.Run();
+                        ackListTask.Value.Run();
                     }
                     TaskTable.Clear();
                 }

@@ -12,7 +12,7 @@ namespace RUDP_AirLink.RUDP.Packets
         short Length { get; set; } = 0;
 
         public byte[] Data { get; set; }
-        byte[] DpData;
+        byte[] DatagramData;
 
         public int TimeId { get; set; }
 
@@ -40,46 +40,46 @@ namespace RUDP_AirLink.RUDP.Packets
             Length = (short)Data.Length;
         }
 
-        public DataPacket(DatagramPacket dp)
+        public DataPacket(DatagramPacket datagramPacket)
         {
-            Dp = dp;
-            DpData = dp.Dgram;
+            MyDatagramPacket = datagramPacket;
+            DatagramData = datagramPacket.Data;
 
-            Ver = BitConverter.ToInt16(DpData, 0);
-            SType = BitConverter.ToInt16(DpData, 2);
+            Ver = BitConverter.ToInt16(DatagramData, 0);
+            SType = BitConverter.ToInt16(DatagramData, 2);
 
-            ConnectId = BitConverter.ToInt32(DpData, 4);
-            ClientId = BitConverter.ToInt32(DpData, 8);
+            ConnectId = BitConverter.ToInt32(DatagramData, 4);
+            ClientId = BitConverter.ToInt32(DatagramData, 8);
 
-            Sequence = BitConverter.ToInt32(DpData, 12);
-            Length = BitConverter.ToInt16(DpData, 16);
-            TimeId = BitConverter.ToInt32(DpData, 18);
+            Sequence = BitConverter.ToInt32(DatagramData, 12);
+            Length = BitConverter.ToInt16(DatagramData, 16);
+            TimeId = BitConverter.ToInt32(DatagramData, 18);
 
             Data = new byte[Length];
 
-            Array.Copy(DpData, 22, Data, 0, Length);
+            Array.Copy(DatagramData, 22, Data, 0, Length);
         }
 
         public void Create(int timeId)
         {
             TimeId = timeId;
-            DpData = new byte[Length + 16 + 8];
+            DatagramData = new byte[Length + 16 + 8];
 
-            BitConverter.GetBytes(Ver).CopyTo(DpData, 0);
-            BitConverter.GetBytes(SType).CopyTo(DpData, 2);
+            BitConverter.GetBytes(Ver).CopyTo(DatagramData, 0);
+            BitConverter.GetBytes(SType).CopyTo(DatagramData, 2);
 
-            BitConverter.GetBytes(ConnectId).CopyTo(DpData, 4);
-            BitConverter.GetBytes(ClientId).CopyTo(DpData, 8);
+            BitConverter.GetBytes(ConnectId).CopyTo(DatagramData, 4);
+            BitConverter.GetBytes(ClientId).CopyTo(DatagramData, 8);
 
-            BitConverter.GetBytes(Sequence).CopyTo(DpData, 12);
-            BitConverter.GetBytes(Length).CopyTo(DpData, 16);
-            BitConverter.GetBytes(TimeId).CopyTo(DpData, 18);
+            BitConverter.GetBytes(Sequence).CopyTo(DatagramData, 12);
+            BitConverter.GetBytes(Length).CopyTo(DatagramData, 16);
+            BitConverter.GetBytes(TimeId).CopyTo(DatagramData, 18);
 
-            Array.Copy(Data, 0, DpData, 22, Length);
+            Array.Copy(Data, 0, DatagramData, 22, Length);
 
-            Dp = new DatagramPacket(DpData, DpData.Length);
-            Dp.Host = DstHost;
-            Dp.Port = DstPort;
+            MyDatagramPacket = new DatagramPacket(DatagramData, DatagramData.Length);
+            MyDatagramPacket.Host = DstHost;
+            MyDatagramPacket.Port = DstPort;
         }
     }
 }

@@ -10,7 +10,7 @@ namespace RUDP_AirLink.RUDP.Packets
     {
         public List<int> AckList { get; set; }
 
-        byte[] DpData;
+        byte[] DatagramData;
 
         public int LastRead { get; set; }
 
@@ -31,90 +31,90 @@ namespace RUDP_AirLink.RUDP.Packets
             LastRead = lastRead;
 
             int len1 = 4 + 4 + 10 + 4 * AckList.Count;
-            DpData = new byte[len1 + 24 + 9];
+            DatagramData = new byte[len1 + 24 + 9];
 
             SType = PacketType.AckListPacket;
 
-            BitConverter.GetBytes(Ver).CopyTo(DpData, 0);
-            BitConverter.GetBytes(SType).CopyTo(DpData, 2);
-            BitConverter.GetBytes(ConnectId).CopyTo(DpData, 4);
-            BitConverter.GetBytes(ClientId).CopyTo(DpData, 8);
+            BitConverter.GetBytes(Ver).CopyTo(DatagramData, 0);
+            BitConverter.GetBytes(SType).CopyTo(DatagramData, 2);
+            BitConverter.GetBytes(ConnectId).CopyTo(DatagramData, 4);
+            BitConverter.GetBytes(ClientId).CopyTo(DatagramData, 8);
 
-            BitConverter.GetBytes(LastRead).CopyTo(DpData, 12);
-            BitConverter.GetBytes((short)AckList.Count).CopyTo(DpData, 16);
+            BitConverter.GetBytes(LastRead).CopyTo(DatagramData, 12);
+            BitConverter.GetBytes((short)AckList.Count).CopyTo(DatagramData, 16);
 
             for (int i = 0; i < AckList.Count; i += 1)
             {
                 int sequence = AckList[i];
-                BitConverter.GetBytes(sequence).CopyTo(DpData, 18 + 4 * i);
+                BitConverter.GetBytes(sequence).CopyTo(DatagramData, 18 + 4 * i);
             }
 
             int u1 = timeId - 2;
-            BitConverter.GetBytes(u1).CopyTo(DpData, len1 + 8);
+            BitConverter.GetBytes(u1).CopyTo(DatagramData, len1 + 8);
 
             SendRecord r1 = sendRecordTable[u1];
             if (r1 != null)
             {
                 S1 = r1.SendSize;
             }
-            BitConverter.GetBytes(S1).CopyTo(DpData, len1 + 4 + 8);
+            BitConverter.GetBytes(S1).CopyTo(DatagramData, len1 + 4 + 8);
 
             int u2 = timeId - 1;
-            BitConverter.GetBytes(u2).CopyTo(DpData, len1 + 8 + 8);
+            BitConverter.GetBytes(u2).CopyTo(DatagramData, len1 + 8 + 8);
 
             SendRecord r2 = sendRecordTable[u2];
             if (r2 != null)
             {
                 S2 = r2.SendSize;
             }
-            BitConverter.GetBytes(S2).CopyTo(DpData, len1 + 12 + 8);
+            BitConverter.GetBytes(S2).CopyTo(DatagramData, len1 + 12 + 8);
 
             int u3 = timeId;
-            BitConverter.GetBytes(u3).CopyTo(DpData, len1 + 16 + 8);
+            BitConverter.GetBytes(u3).CopyTo(DatagramData, len1 + 16 + 8);
 
             SendRecord r3 = sendRecordTable[u3];
             if (r3 != null)
             {
                 S3 = r3.SendSize;
             }
-            BitConverter.GetBytes(S3).CopyTo(DpData, len1 + 20 + 8);
+            BitConverter.GetBytes(S3).CopyTo(DatagramData, len1 + 20 + 8);
 
-            Dp = new DatagramPacket(DpData, DpData.Length);
+            MyDatagramPacket = new DatagramPacket(DatagramData, DatagramData.Length);
         }
 
-        public AckListPacket(DatagramPacket dp)
+        public AckListPacket(DatagramPacket datagramPacket)
         {
-            Dp = dp;
-            DpData = dp.Dgram;
+            MyDatagramPacket = datagramPacket;
+            DatagramData = datagramPacket.Data;
 
-            Ver = BitConverter.ToInt16(DpData, 0);
-            SType = BitConverter.ToInt16(DpData, 2);
-            ConnectId = BitConverter.ToInt32(DpData, 4);
-            ClientId = BitConverter.ToInt32(DpData, 8);
+            Ver = BitConverter.ToInt16(DatagramData, 0);
+            SType = BitConverter.ToInt16(DatagramData, 2);
+            ConnectId = BitConverter.ToInt32(DatagramData, 4);
+            ClientId = BitConverter.ToInt32(DatagramData, 8);
 
-            LastRead = BitConverter.ToInt32(DpData, 12);
+            LastRead = BitConverter.ToInt32(DatagramData, 12);
 
-            int sum = BitConverter.ToInt16(DpData, 16);
+            int sum = BitConverter.ToInt16(DatagramData, 16);
 
             AckList = new List<int>();
             int t = 0;
             for (int i = 0; i < sum; i += 1)
             {
                 t = 10 + 4 + i;
-                int sequence = BitConverter.ToInt32(DpData, t + 8);
+                int sequence = BitConverter.ToInt32(DatagramData, t + 8);
                 AckList.Add(sequence);
             }
 
             t = 10 + 4 * sum - 4;
 
-            R1 = BitConverter.ToInt32(DpData, t + 4 + 8);
-            S1 = BitConverter.ToInt32(DpData, t + 8 + 8);
+            R1 = BitConverter.ToInt32(DatagramData, t + 4 + 8);
+            S1 = BitConverter.ToInt32(DatagramData, t + 8 + 8);
 
-            R2 = BitConverter.ToInt32(DpData, t + 12 + 8);
-            S2 = BitConverter.ToInt32(DpData, t + 16 + 8);
+            R2 = BitConverter.ToInt32(DatagramData, t + 12 + 8);
+            S2 = BitConverter.ToInt32(DatagramData, t + 16 + 8);
 
-            R3 = BitConverter.ToInt32(DpData, t + 20 + 8);
-            S3 = BitConverter.ToInt32(DpData, t + 24 + 8);
+            R3 = BitConverter.ToInt32(DatagramData, t + 20 + 8);
+            S3 = BitConverter.ToInt32(DatagramData, t + 24 + 8);
         }
     }
 }

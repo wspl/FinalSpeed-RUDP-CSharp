@@ -30,7 +30,7 @@ namespace RUDP_AirLink.RUDP
 
         Thread SendThread;
 
-        object SynLock { get; set; } = new object();
+        public object SynLock { get; set; } = new object();
 
         private Dictionary<int, SendRecord> SendRecordTable = new Dictionary<int, SendRecord>();
 
@@ -46,7 +46,7 @@ namespace RUDP_AirLink.RUDP
 
         object SynTimeId = new object();
 
-        long Sended = 0;
+        long Sent = 0;
         long MarkTime = 0;
 
         public long LastSendPingTime { get; set; } = DateTimeExtensions.CurrentTimeMillis();
@@ -74,9 +74,9 @@ namespace RUDP_AirLink.RUDP
 
         public string Password { get; set; }
 
-        public ResendManage em = new ResendManage();
+        public ResendManage MyResendManage = new ResendManage();
 
-        bool Closed = false;
+        public bool Closed { get; set; } = false;
 
         public ClientControl(Route route, int clientId, string dstHost, int dstPort)
         {
@@ -86,24 +86,24 @@ namespace RUDP_AirLink.RUDP
             DstPort = dstPort;
         }
 
-        public void OnReceivePacket(DatagramPacket dp)
+        public void OnReceivePacket(DatagramPacket datagramPacket)
         {
-            byte[] dpData = dp.Dgram;
+            byte[] dpData = datagramPacket.Data;
 
-            int sType = PacketCheck.CheckSType(dp);
+            int sType = PacketCheck.CheckSType(datagramPacket);
             int remoteClientId = BitConverter.ToInt32(dpData, 9);
 
             if (sType == PacketType.PingPacket)
             {
-                PingPacket pp = new PingPacket(dp);
-                SendPingPacket2(pp.PingId, dp.Host, dp.Port);
-                CurrentSpeed = pp.DownloadSpeed * 1024;
+                PingPacket pingPacket = new PingPacket(datagramPacket);
+                SendPingPacket2(pingPacket.PingId, datagramPacket.Host, datagramPacket.Port);
+                CurrentSpeed = pingPacket.DownloadSpeed * 1024;
             }
             else if (sType == PacketType.PingPacket2)
             {
-                PingPacket2 ppt = new PingPacket2(dp);
+                PingPacket2 pingPacket2 = new PingPacket2(datagramPacket);
                 LastReceivePingTime = DateTimeExtensions.CurrentTimeMillis();
-                long? t = PingTable[ppt.PingId];
+                long? t = PingTable[pingPacket2.PingId];
                 if (t != null)
                 {
                     PingDelay = (int)(DateTimeExtensions.CurrentTimeMillis() - t);
@@ -116,14 +116,14 @@ namespace RUDP_AirLink.RUDP
                     {
                         protocal = "udp";
                     }
-                    Console.WriteLine("delay_" + protocal + " " + PingDelay + "ms " + dp.Host + ":" + dp.Port);
+                    Console.WriteLine("delay_" + protocal + " " + PingDelay + "ms " + datagramPacket.Host + ":" + datagramPacket.Port);
                 }
             }
         }
 
-        public void SendPacket(DatagramPacket dp)
+        public void SendPacket(DatagramPacket datagramPacket)
         {
-            MyRoute.SendPacket(dp);
+            MyRoute.SendPacket(datagramPacket);
         }
 
         public void AddConnection(ConnectionUDP conn)
@@ -171,7 +171,7 @@ namespace RUDP_AirLink.RUDP
             SendRecordTableRemote.Clear();
         }
 
-        public void OnSendDataPacket()
+        public void OnSendDataPacket(ConnectionUDP conn)
         {
 
         }
@@ -184,22 +184,23 @@ namespace RUDP_AirLink.RUDP
             PingTable.Add(pingId, pingTime);
             LastSendPingTime = DateTimeExtensions.CurrentTimeMillis();
 
-            PingPacket pp = new PingPacket(0, MyRoute.LocalClientId, pingId, MyRoute.LocalDownloadSpeed, MyRoute.LocalUploadSoeed);
-            pp.DstHost = DstHost;
-            pp.DstPort = DstPort;
+            PingPacket pingPacket = new PingPacket(0, MyRoute.LocalClientId, pingId, 
+                                                   MyRoute.LocalDownloadSpeed, MyRoute.LocalUploadSoeed);
+            pingPacket.DstHost = DstHost;
+            pingPacket.DstPort = DstPort;
 
             //try
-            SendPacket(pp.Dp);
+            SendPacket(pingPacket.MyDatagramPacket);
         }
 
         public void SendPingPacket2(int pingId, string dstHost, int dstPort)
         {
-            PingPacket2 ppb = new PingPacket2(0, MyRoute.LocalClientId, pingId);
-            ppb.DstHost = dstHost;
-            ppb.DstPort = dstPort;
+            PingPacket2 pingPacket2 = new PingPacket2(0, MyRoute.LocalClientId, pingId);
+            pingPacket2.DstHost = dstHost;
+            pingPacket2.DstPort = dstPort;
 
             //try
-            SendPacket(ppb.Dp);
+            SendPacket(pingPacket2.MyDatagramPacket);
         }
 
         //TODO?: public void onReceivePing(PingMessage pm)
@@ -239,15 +240,15 @@ namespace RUDP_AirLink.RUDP
             {
                 CurrentSpeed = MyRoute.LocalUploadSpeed;
             }
-            if (Sended == 0)
+            if (Sent == 0)
             {
                 MarkTime = startTime;
             }
-            Sended += length;
+            Sent += length;
             // 10K Sleep
-            if (Sended > 10 * 1024)
+            if (Sent > 10 * 1024)
             {
-                long needTime = (long)(1000 * 1000 * 1000f * Sended / CurrentSpeed);
+                long needTime = (long)(1000 * 1000 * 1000f * Sent / CurrentSpeed);
                 long usedTime = DateTimeExtensions.NanoTime() - MarkTime;
                 
                 if(usedTime < needTime)
@@ -275,7 +276,7 @@ namespace RUDP_AirLink.RUDP
                         TrueSleepAll += DateTimeExtensions.NanoTime() - t1;
                     }
                 }
-                Sended = 0;
+                Sent = 0;
             }
         }
     }

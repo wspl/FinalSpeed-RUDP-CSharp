@@ -87,6 +87,6 @@ namespace RUDP_AirLink.RUDP
             SendSize += size;
         }
 
-        public void AddSendedFirst(int size) => SendSizeFirst += size;
+        public void AddSentFirst(int size) => SendSizeFirst += size;
     }
 }

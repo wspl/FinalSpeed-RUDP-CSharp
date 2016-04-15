@@ -9,7 +9,7 @@ namespace RUDP_AirLink.RUDP.Packets
     class CloseStreamPacket : Packet
     {
         byte[] Data;
-        byte[] DpData;
+        byte[] DatagramData;
 
         public int CloseOffset { get; set; }
 
@@ -17,31 +17,31 @@ namespace RUDP_AirLink.RUDP.Packets
         {
             SType = PacketType.CloseStreamPacket;
 
-            DpData = new byte[16];
+            DatagramData = new byte[16];
             ClientId = clientId;
             ConnectId = connectId;
             CloseOffset = closeOffset;
 
-            BitConverter.GetBytes(Ver).CopyTo(DpData, 0);
-            BitConverter.GetBytes(SType).CopyTo(DpData, 2);
-            BitConverter.GetBytes(ConnectId).CopyTo(DpData, 4);
-            BitConverter.GetBytes(ClientId).CopyTo(DpData, 8);
-            BitConverter.GetBytes(CloseOffset).CopyTo(DpData, 12);
+            BitConverter.GetBytes(Ver).CopyTo(DatagramData, 0);
+            BitConverter.GetBytes(SType).CopyTo(DatagramData, 2);
+            BitConverter.GetBytes(ConnectId).CopyTo(DatagramData, 4);
+            BitConverter.GetBytes(ClientId).CopyTo(DatagramData, 8);
+            BitConverter.GetBytes(CloseOffset).CopyTo(DatagramData, 12);
 
-            Dp = new DatagramPacket(DpData, DpData.Length);
+            MyDatagramPacket = new DatagramPacket(DatagramData, DatagramData.Length);
         }
 
-        public CloseStreamPacket(DatagramPacket dp)
+        public CloseStreamPacket(DatagramPacket datagramPacket)
         {
-            Dp = dp;
-            DpData = dp.Dgram;
+            MyDatagramPacket = datagramPacket;
+            DatagramData = datagramPacket.Data;
 
-            Ver = BitConverter.ToInt16(DpData, 0);
-            SType = BitConverter.ToInt16(DpData, 2);
+            Ver = BitConverter.ToInt16(DatagramData, 0);
+            SType = BitConverter.ToInt16(DatagramData, 2);
 
-            ConnectId = BitConverter.ToInt32(DpData, 4);
-            ClientId = BitConverter.ToInt32(DpData, 8);
-            CloseOffset = BitConverter.ToInt32(DpData, 12);
+            ConnectId = BitConverter.ToInt32(DatagramData, 4);
+            ClientId = BitConverter.ToInt32(DatagramData, 8);
+            CloseOffset = BitConverter.ToInt32(DatagramData, 12);
         }
     }
 }

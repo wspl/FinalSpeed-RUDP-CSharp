@@ -8,7 +8,7 @@ namespace RUDP_AirLink.RUDP.Packets
 {
     class PingPacket : Packet
     {
-        byte[] DpData = new byte[20];
+        byte[] DatagramData = new byte[20];
 
         public int PingId { get; set; }
 
@@ -20,30 +20,30 @@ namespace RUDP_AirLink.RUDP.Packets
         {
             SType = PacketType.PingPacket;
 
-            BitConverter.GetBytes(Ver).CopyTo(DpData, 0);
-            BitConverter.GetBytes(SType).CopyTo(DpData, 2);
-            BitConverter.GetBytes(connectId).CopyTo(DpData, 4);
-            BitConverter.GetBytes(clientId).CopyTo(DpData, 8);
-            BitConverter.GetBytes(pingId).CopyTo(DpData, 12);
-            BitConverter.GetBytes((short)(downloadSpeed / 1024)).CopyTo(DpData, 16);
-            BitConverter.GetBytes((short)(uploadSpeed / 1024)).CopyTo(DpData, 18);
+            BitConverter.GetBytes(Ver).CopyTo(DatagramData, 0);
+            BitConverter.GetBytes(SType).CopyTo(DatagramData, 2);
+            BitConverter.GetBytes(connectId).CopyTo(DatagramData, 4);
+            BitConverter.GetBytes(clientId).CopyTo(DatagramData, 8);
+            BitConverter.GetBytes(pingId).CopyTo(DatagramData, 12);
+            BitConverter.GetBytes((short)(downloadSpeed / 1024)).CopyTo(DatagramData, 16);
+            BitConverter.GetBytes((short)(uploadSpeed / 1024)).CopyTo(DatagramData, 18);
 
-            Dp = new DatagramPacket(DpData, DpData.Length);
+            MyDatagramPacket = new DatagramPacket(DatagramData, DatagramData.Length);
         }
 
         
-        public PingPacket(DatagramPacket dp)
+        public PingPacket(DatagramPacket datagramPacket)
         {
-            Dp = dp;
-            DpData = dp.Dgram;
+            MyDatagramPacket = datagramPacket;
+            DatagramData = datagramPacket.Data;
 
-            Ver = BitConverter.ToInt16(DpData, 0);
-            SType = BitConverter.ToInt16(DpData, 2);
-            ConnectId = BitConverter.ToInt32(DpData, 4);
-            ClientId = BitConverter.ToInt32(DpData, 8);
-            PingId = BitConverter.ToInt32(DpData, 12);
-            DownloadSpeed = BitConverter.ToInt32(DpData, 16);
-            UploadSpeed = BitConverter.ToInt32(DpData, 18);
+            Ver = BitConverter.ToInt16(DatagramData, 0);
+            SType = BitConverter.ToInt16(DatagramData, 2);
+            ConnectId = BitConverter.ToInt32(DatagramData, 4);
+            ClientId = BitConverter.ToInt32(DatagramData, 8);
+            PingId = BitConverter.ToInt32(DatagramData, 12);
+            DownloadSpeed = BitConverter.ToInt32(DatagramData, 16);
+            UploadSpeed = BitConverter.ToInt32(DatagramData, 18);
         }
     }
 }

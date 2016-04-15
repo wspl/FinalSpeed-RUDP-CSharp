@@ -20,8 +20,8 @@ namespace RUDP_AirLink.RUDP
 
         Dictionary<int, DataPacket> ReceiveTable = new Dictionary<int, DataPacket>();
 
-        int LastRead = -1;
-        int LastRead2 = -1;
+        public int LastRead = -1;
+        public int LastRead2 = -1;
 
         object AvailOb = new object();
 
@@ -100,22 +100,22 @@ namespace RUDP_AirLink.RUDP
             }
         }
 
-        public OnReceivePacket(DatagramPacket dp)
+        public void OnReceivePacket(DatagramPacket datagramPacket)
         {
             DataPacket dataPacket;
-            if (dp != null)
+            if (datagramPacket != null)
             {
                 if (Conn.IsConnected)
                 {
-                    int ver = PacketCheck.CheckVer(dp);
-                    int sType = PacketCheck.CheckSType(dp);
+                    int ver = PacketCheck.CheckVer(datagramPacket);
+                    int sType = PacketCheck.CheckSType(datagramPacket);
 
                     if (ver == RUDPConfig.ProtocalVer)
                     {
                         Conn.Live();
                         if (sType == PacketType.DataPacket)
                         {
-                            dataPacket = new DataPacket(dp);
+                            dataPacket = new DataPacket(datagramPacket);
                             int timeId = dataPacket.TimeId;
 
                             SendRecord record = Conn.MyClientControl.SendRecordTableRemote[timeId];
@@ -149,7 +149,7 @@ namespace RUDP_AirLink.RUDP
                         }
                         else if (sType == PacketType.AckListPacket)
                         {
-                            AckListPacket ackListPacket = new AckListPacket(dp);
+                            AckListPacket ackListPacket = new AckListPacket(datagramPacket);
 
                             int lastRead3 = ackListPacket.LastRead;
                             if (lastRead3 > LastRead2)
@@ -188,19 +188,19 @@ namespace RUDP_AirLink.RUDP
                         }
                         else if (sType == PacketType.CloseStreamPacket)
                         {
-                            CloseStreamPacket closeStreamPacket = new CloseStreamPacket(dp);
+                            CloseStreamPacket closeStreamPacket = new CloseStreamPacket(datagramPacket);
                             ReceviedClose = true;
                             int n = closeStreamPacket.CloseOffset;
                             CloseRemoteStream(n);
                         }
                         else if (sType == PacketType.CloseConnPacket)
                         {
-                            CloseConnPacket closeConnPacket = new CloseConnPacket(dp);
+                            CloseConnPacket closeConnPacket = new CloseConnPacket(datagramPacket);
                             Conn.CloseRemote();
                         }
                         else
                         {
-                            throw Exception("Unknown packet type");
+                            throw new Exception("Unknown packet type");
                         }
                     }
                 }
@@ -215,7 +215,7 @@ namespace RUDP_AirLink.RUDP
             }
         }
 
-        bool CheckWin()
+        public bool CheckWin()
         {
             Nw = Conn.MySender.SendOffset - LastRead2;
             bool b = false;
@@ -228,7 +228,7 @@ namespace RUDP_AirLink.RUDP
             return b;
         }
 
-        void CloseRemoteSteram(int closeOffset)
+        public void CloseRemoteStream(int closeOffset)
         {
             CloseOffset = closeOffset;
             if (!StreamClose)
@@ -254,7 +254,7 @@ namespace RUDP_AirLink.RUDP
             }
         }
 
-        void CloseLocalStream()
+        public void CloseLocalStream()
         {
             if (!StreamClose)
             {

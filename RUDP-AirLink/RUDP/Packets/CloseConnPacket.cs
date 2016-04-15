@@ -9,33 +9,33 @@ namespace RUDP_AirLink.RUDP.Packets
     class CloseConnPacket : Packet
     {
         byte[] Data;
-        byte[] DpData;
+        byte[] DatagramData;
 
         public CloseConnPacket(int connectId, int clientId)
         {
             SType = PacketType.CloseConnPacket;
 
-            DpData = new byte[12];
+            DatagramData = new byte[12];
             ClientId = clientId;
             ConnectId = connectId;
 
-            BitConverter.GetBytes(Ver).CopyTo(DpData, 0);
-            BitConverter.GetBytes(SType).CopyTo(DpData, 2);
-            BitConverter.GetBytes(ConnectId).CopyTo(DpData, 4);
-            BitConverter.GetBytes(ClientId).CopyTo(DpData, 8);
+            BitConverter.GetBytes(Ver).CopyTo(DatagramData, 0);
+            BitConverter.GetBytes(SType).CopyTo(DatagramData, 2);
+            BitConverter.GetBytes(ConnectId).CopyTo(DatagramData, 4);
+            BitConverter.GetBytes(ClientId).CopyTo(DatagramData, 8);
 
-            Dp = new DatagramPacket(DpData, DpData.Length);
+            MyDatagramPacket = new DatagramPacket(DatagramData, DatagramData.Length);
         }
 
-        public CloseConnPacket(DatagramPacket dp)
+        public CloseConnPacket(DatagramPacket datagramPacket)
         {
-            Dp = dp;
-            DpData = dp.Dgram;
+            MyDatagramPacket = datagramPacket;
+            DatagramData = datagramPacket.Data;
 
-            Ver = BitConverter.ToInt16(DpData, 0);
-            SType = BitConverter.ToInt16(DpData, 2);
-            ConnectId = BitConverter.ToInt32(DpData, 4);
-            ClientId = BitConverter.ToInt32(DpData, 8);
+            Ver = BitConverter.ToInt16(DatagramData, 0);
+            SType = BitConverter.ToInt16(DatagramData, 2);
+            ConnectId = BitConverter.ToInt32(DatagramData, 4);
+            ClientId = BitConverter.ToInt32(DatagramData, 8);
         }
     }
 }

@@ -19,7 +19,7 @@ namespace RUDP_AirLink.RUDP
         public UDPInputStream Uis;
 
         long ConnectionId;
-        Route MyRoute;
+        public Route MyRoute;
 
         int Mode;
 
@@ -35,7 +35,7 @@ namespace RUDP_AirLink.RUDP
         long LastLiveTime = DateTimeExtensions.CurrentTimeMillis();
         long LastSendLiveTime = 0;
 
-        static Random ran = new Random();
+        static Random Ran = new Random();
 
         public int ConnectId;
 
@@ -67,7 +67,7 @@ namespace RUDP_AirLink.RUDP
 
                 if (mode == 2)
                 {
-                    route.CreateTunnelProcessor().Process(ref this);
+                    route.CreateTunnelProcessor().Process(this);
                 }
             }
             catch (Exception e)
@@ -85,8 +85,8 @@ namespace RUDP_AirLink.RUDP
 
         public DatagramPacket GetPacket(int connectId)
         {
-            DatagramPacket dp = DpBuffer.Take();
-            return dp;
+            DatagramPacket datagramPacket = DpBuffer.Take();
+            return datagramPacket;
         }
 
         public override string ToString() => DstHost + ":" + DstPort;
