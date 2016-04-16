@@ -25,7 +25,7 @@ namespace RUDP_AirLink.RUDP
         public int DstPort;
 
         public int Sequence = 0;
-        int SendOffset = -1;
+        public int SendOffset = -1;
 
         int UnAckMax = -1;
         int SendSum = 0;
@@ -55,7 +55,7 @@ namespace RUDP_AirLink.RUDP
             DstPort = conn.DstPort;
         }
 
-        void SendData(byte[] data, int offset, int length)
+        public void SendData(byte[] data, int offset, int length)
         {
             int packetLength = RUDPConfig.PackageSize;
             int sum = (length / packetLength);
@@ -201,11 +201,11 @@ namespace RUDP_AirLink.RUDP
             }
         }
 
-        void SendAckDelay(int ackSequence) => Conn.MyRoute.DelayAckManage.AddAck(Conn, ackSequence);
+        public void SendAckDelay(int ackSequence) => Conn.MyRoute.DelayAckManage.AddAck(Conn, ackSequence);
 
-        void SendLastReadDelay() => Conn.MyRoute.DelayAckManage.AddLastRead(Conn);
+        public void SendLastReadDelay() => Conn.MyRoute.DelayAckManage.AddLastRead(Conn);
 
-        DataPacket GetDataPacket(int sequence) => SendTable[sequence];
+        public DataPacket GetDataPacket(int sequence) => SendTable[sequence];
 
         public void Resend(int sequence, int count)
         {
@@ -227,7 +227,7 @@ namespace RUDP_AirLink.RUDP
             }
         }
 
-        void RemoveSentAck(int sequence)
+        public void RemoveSentAck(int sequence)
         {
             lock (SynSendTable)
             {
@@ -236,7 +236,7 @@ namespace RUDP_AirLink.RUDP
             }
         }
 
-        void Play()
+        public void Play()
         {
             lock (WinOb)
             {
@@ -244,7 +244,7 @@ namespace RUDP_AirLink.RUDP
             }
         }
 
-        void Close()
+        public void Close()
         {
             lock (WinOb)
             {
@@ -264,7 +264,7 @@ namespace RUDP_AirLink.RUDP
             Send(closeStreamPacket.MyDatagramPacket);
         }
 
-        void SendCloseConnPacket()
+        public void SendCloseConnPacket()
         {
             CloseConnPacket closeConnPacket = new CloseConnPacket(Conn.ConnectId, Conn.MyRoute.LocalClientId);
             closeConnPacket.DstHost = DstHost;
@@ -275,7 +275,7 @@ namespace RUDP_AirLink.RUDP
             Send(closeConnPacket.MyDatagramPacket);
         }
 
-        void SendALMessage(List<int> ackList)
+        public void SendAckListPacket(List<int> ackList)
         {
             int currentTimeId = Conn.MyRecevier.CurrentRemoteTimeId;
             AckListPacket ackListPakcet = new AckListPacket(Conn.ConnectId, ackList, Conn.MyRecevier.LastRead,

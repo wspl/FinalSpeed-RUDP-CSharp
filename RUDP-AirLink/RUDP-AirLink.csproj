@@ -65,6 +65,11 @@
     <Compile Include="RUDP\RUDPConfig.cs" />
     <Compile Include="RUDP\Sender.cs" />
     <Compile Include="RUDP\SendRecord.cs" />
+    <Compile Include="RUDP\StreamPipe.cs" />
+    <Compile Include="RUDP\TrafficEvent.cs" />
+    <Compile Include="RUDP\TrafficListener.cs" />
+    <Compile Include="RUDP\UDPInputStream.cs" />
+    <Compile Include="RUDP\UDPOutputStream.cs" />
     <Compile Include="Utils\DateTimeExtensions.cs" />
     <Compile Include="Utils\PacketCheck.cs" />
   </ItemGroup>

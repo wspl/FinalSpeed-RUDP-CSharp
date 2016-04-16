@@ -1,0 +1,14 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace RUDP_AirLink.RUDP
+{
+    interface TrafficListener
+    {
+        void TrafficDownload(TrafficEvent e);
+        void TrafficUpload(TrafficEvent e);
+    }
+}

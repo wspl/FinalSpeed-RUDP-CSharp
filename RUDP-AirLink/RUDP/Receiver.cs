@@ -207,7 +207,7 @@ namespace RUDP_AirLink.RUDP
             }
         }
 
-        public void Destory()
+        public void Destroy()
         {
             lock (AvailOb)
             {

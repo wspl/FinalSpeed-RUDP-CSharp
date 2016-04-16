@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 using RUDP_AirLink.Utils;
 using System.Collections.Concurrent;
+using System.Threading;
 
 namespace RUDP_AirLink.RUDP
 {
@@ -77,7 +78,7 @@ namespace RUDP_AirLink.RUDP
 
                 lock (this)
                 {
-                    NotifyAll();
+                    Monitor.PulseAll(this);
                 }
                 throw (e);
             }
@@ -98,7 +99,8 @@ namespace RUDP_AirLink.RUDP
                 LocalClosed = true;
                 if (!StopNow)
                 {
-                    MySender.SendClosePacketConn();
+                    MySender.SendCloseConnPacket();
+                    
                 }
                 Destory(false);
             }
@@ -124,8 +126,8 @@ namespace RUDP_AirLink.RUDP
                     _connected = false;
                     Uis.CloseLocalStream();
                     Uos.CloseLocalStream();
-                    MySender.Destory();
-                    MyRecevier.Destory();
+                    MySender.Destroy();
+                    MyRecevier.Destroy();
                     MyRoute.RemoveConnection(this);
                     MyClientControl.RemoveConnection(this);
                 }
