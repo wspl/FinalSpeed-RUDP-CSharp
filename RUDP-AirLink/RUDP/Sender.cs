@@ -197,7 +197,7 @@ namespace RUDP_AirLink.RUDP
                     Conn.MyClientControl.SendSleep(startTime, dataPacket.Data.Length);
                 }
                 TrafficEvent e = new TrafficEvent("", (long)Ran.Next(), dataPacket.Data.Length, TrafficEvent.Upload);
-                Route.FirstEvent(e);
+                Route.FireEvent(e);
             }
         }
 
@@ -278,7 +278,7 @@ namespace RUDP_AirLink.RUDP
         public void SendAckListPacket(List<int> ackList)
         {
             int currentTimeId = Conn.MyRecevier.CurrentRemoteTimeId;
-            AckListPacket ackListPakcet = new AckListPacket(Conn.ConnectId, ackList, Conn.MyRecevier.LastRead,
+            AckListPacket ackListPakcet = new AckListPacket(ackList, Conn.MyRecevier.LastRead,
                                                             Conn.MyClientControl.SendRecordTableRemote, currentTimeId,
                                                             Conn.ConnectId, Conn.MyRoute.LocalClientId);
             ackListPakcet.DstHost = DstHost;

@@ -51,7 +51,7 @@ namespace RUDP_AirLink.RUDP
             PreReadData = preReadData;
             BufferSize = bufferSize;
 
-            Route.Es.Execute(() => {
+            Task.Factory.StartNew(() => {
                 byte[] data = new byte[bufferSize];
                 int len = 0;
 
@@ -60,12 +60,12 @@ namespace RUDP_AirLink.RUDP
                 {
                     binaryWriter.Write(preReadData, 0, preReadDataLength);
                 }
-                while ((len = binaryReader.Read(data)) > 0)
+                while ((len = binaryReader.Read(/*data?*/)) > 0)
                 {
                     binaryWriter.Write(data, 0, len);
                 }
 
-                Closed();
+                Close();
             });
         }
 
@@ -79,7 +79,7 @@ namespace RUDP_AirLink.RUDP
                 if (MySocketA != null)
                 {
 
-                    Route.Es.Excute(() => {
+                    Task.Factory.StartNew(() => {
                         MySocketA.Close();
                     });
                 }
@@ -87,7 +87,7 @@ namespace RUDP_AirLink.RUDP
                 if (MySocketB != null)
                 {
 
-                    Route.Es.Excute(() => {
+                    Task.Factory.StartNew(() => {
                         MySocketB.Close();
                     });
                 }

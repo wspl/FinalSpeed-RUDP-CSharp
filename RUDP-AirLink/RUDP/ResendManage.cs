@@ -24,7 +24,7 @@ namespace RUDP_AirLink.RUDP
 
         public ResendManage()
         {
-            Route.Es.Execute(this);
+            Task.Factory.StartNew(Run);
         }
 
         public void AddTask(ConnectionUDP conn, int sequence)

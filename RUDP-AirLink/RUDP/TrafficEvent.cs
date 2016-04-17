@@ -14,7 +14,7 @@ namespace RUDP_AirLink.RUDP
         public static int Download = 10;
         public static int Upload = 11;
 
-        int Type { get; } = 10;
+        public int Type { get; } = 10;
 
         string UserId;
 

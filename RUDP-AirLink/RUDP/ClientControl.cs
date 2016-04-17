@@ -107,15 +107,7 @@ namespace RUDP_AirLink.RUDP
                 if (t != null)
                 {
                     PingDelay = (int)(DateTimeExtensions.CurrentTimeMillis() - t);
-                    string protocal = "";
-                    if (MyRoute.IsUseTcpTun())
-                    {
-                        protocal = "tcp";
-                    }
-                    else
-                    {
-                        protocal = "udp";
-                    }
+                    string protocal = "udp";
                     Console.WriteLine("delay_" + protocal + " " + PingDelay + "ms " + datagramPacket.Host + ":" + datagramPacket.Port);
                 }
             }
@@ -145,7 +137,7 @@ namespace RUDP_AirLink.RUDP
         public void Close()
         {
             Closed = true;
-            MyRoute.ClientManager.RemoveClient(ClientId);
+            MyRoute.MyClientManager.RemoveClient(ClientId);
             lock (SynConnTable)
             {
                 foreach(KeyValuePair<int, ConnectionUDP> connItem in ConnTable)
@@ -153,7 +145,7 @@ namespace RUDP_AirLink.RUDP
                     ConnectionUDP conn = connItem.Value;
                     if (conn != null)
                     {
-                        MyRoute.Es.Execute(() => {
+                        Task.Factory.StartNew(() => {
                             conn.StopNow = true;
                             conn.Destory(true);
                         });
@@ -185,7 +177,7 @@ namespace RUDP_AirLink.RUDP
             LastSendPingTime = DateTimeExtensions.CurrentTimeMillis();
 
             PingPacket pingPacket = new PingPacket(0, MyRoute.LocalClientId, pingId, 
-                                                   MyRoute.LocalDownloadSpeed, MyRoute.LocalUploadSoeed);
+                                                   MyRoute.LocalDownloadSpeed, MyRoute.LocalUploadSpeed);
             pingPacket.DstHost = DstHost;
             pingPacket.DstPort = DstPort;
 

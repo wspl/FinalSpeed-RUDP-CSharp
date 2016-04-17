@@ -62,6 +62,7 @@
     <Compile Include="RUDP\Receiver.cs" />
     <Compile Include="RUDP\ResendItem.cs" />
     <Compile Include="RUDP\ResendManage.cs" />
+    <Compile Include="RUDP\Route.cs" />
     <Compile Include="RUDP\RUDPConfig.cs" />
     <Compile Include="RUDP\Sender.cs" />
     <Compile Include="RUDP\SendRecord.cs" />

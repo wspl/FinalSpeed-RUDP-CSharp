@@ -66,9 +66,9 @@ namespace RUDP_AirLink.RUDP
             }
         }
 
-        void RemoveClient(int clientId) => ClientTable.Remove(clientId);
+        public void RemoveClient(int clientId) => ClientTable.Remove(clientId);
 
-        ClientControl GetClientControl(int clientId, string dstHost, int dstPort)
+        public ClientControl GetClientControl(int clientId, string dstHost, int dstPort)
         {
             ClientControl clientControl = ClientTable[clientId];
             if (clientControl == null)
