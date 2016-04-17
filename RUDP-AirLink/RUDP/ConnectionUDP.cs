@@ -65,11 +65,12 @@ namespace RUDP_AirLink.RUDP
                 MyRecevier = new Receiver(this);
                 Uos = new UDPOutputStream(this);
                 Uis = new UDPInputStream(this);
-
+                /*
                 if (mode == 2)
                 {
                     route.CreateTunnelProcessor().Process(this);
                 }
+                */
             }
             catch (Exception e)
             {

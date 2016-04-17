@@ -13,6 +13,7 @@ using RUDP_AirLink.RUDP.Packets;
 
 namespace RUDP_AirLink.RUDP
 {
+
     class Route
     {
         private UdpClient MyUdpClient;
@@ -47,7 +48,7 @@ namespace RUDP_AirLink.RUDP
 
         public static List<TrafficListener> ListenerList = new List<TrafficListener>();
 
-        public Route(int mode, int port = 3000)
+        public Route(int mode, int port = 150)
         {
             LocalClientId = Ran.Next();
             Mode = mode;
@@ -192,6 +193,15 @@ namespace RUDP_AirLink.RUDP
                 clientControl.AddConnection(conn);
             }
             return conn;
+        }
+
+        public void RemoveConnection(ConnectionUDP conn)
+        {
+            lock(this)
+            {
+                ClosedTable.Add(conn.ConnectId);
+                ConnTable.Remove(conn.ConnectId);
+            }
         }
     }
 }
